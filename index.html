@@ -1,0 +1,190 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>UPI Payment Gateway | PhonePe, Google Pay, BharatPe</title>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background: #f5f7fa; color: #333; line-height: 1.6; }
+        .container { max-width: 480px; margin: 20px auto; background: white; border-radius: 20px; box-shadow: 0 10px 30px rgba(0, 0, 0, 0.08); overflow: hidden; }
+        .header { background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%); color: white; padding: 30px 25px; text-align: center; }
+        .header h1 { font-size: 24px; margin-bottom: 8px; }
+        .header p { opacity: 0.9; font-size: 15px; }
+        .content { padding: 25px; }
+        .input-group { margin-bottom: 22px; }
+        label { display: block; margin-bottom: 8px; font-weight: 600; color: #444; font-size: 14px; }
+        input, select { width: 100%; padding: 14px 16px; border: 2px solid #e1e5eb; border-radius: 12px; font-size: 16px; transition: border 0.3s; }
+        input:focus, select:focus { border-color: #6a11cb; outline: none; }
+        .btn { background: linear-gradient(to right, #6a11cb, #2575fc); color: white; border: none; padding: 16px; width: 100%; border-radius: 12px; font-size: 17px; font-weight: 600; cursor: pointer; transition: opacity 0.3s; margin-top: 10px; }
+        .btn:hover { opacity: 0.92; }
+        .upi-apps { display: flex; justify-content: space-between; margin: 25px 0; flex-wrap: wrap; gap: 15px; }
+        .upi-app { flex: 1; min-width: 80px; text-align: center; padding: 15px 10px; border-radius: 12px; border: 2px solid #e1e5eb; cursor: pointer; transition: all 0.3s; }
+        .upi-app:hover { border-color: #6a11cb; background: #f9f7ff; }
+        .upi-app img { width: 48px; height: 48px; margin-bottom: 10px; }
+        .qr-container { text-align: center; margin: 25px 0; padding: 20px; background: #f8f9fa; border-radius: 15px; }
+        #qrCode { margin: 15px auto; }
+        .hidden { display: none; }
+        .status { padding: 15px; border-radius: 12px; margin-top: 20px; text-align: center; font-weight: 600; }
+        .success { background: #d4edda; color: #155724; }
+        .error { background: #f8d7da; color: #721c24; }
+        .footer { text-align: center; padding: 20px; color: #666; font-size: 13px; border-top: 1px solid #eee; margin-top: 20px; }
+    </style>
+    <script src="https://checkout.razorpay.com/v1/checkout.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/qrcode@1.5.3/build/qrcode.min.js"></script>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>💳 Secure Payment Gateway</h1>
+            <p>Pay via UPI, Card, Net Banking | 100% Safe</p>
+        </div>
+        <div class="content">
+            <div class="input-group">
+                <label for="amount">Enter Amount (₹)</label>
+                <input type="number" id="amount" placeholder="E.g., 500" min="1" value="100">
+            </div>
+            <div class="input-group">
+                <label for="upiId">Your UPI ID (Optional)</label>
+                <input type="text" id="upiId" placeholder="yourname@upi">
+            </div>
+            <p style="font-size: 14px; color: #666; margin-bottom: 20px;">If you provide UPI ID, payment link will be generated for your account.</p>
+            
+            <div class="input-group">
+                <label>Choose Payment Method</label>
+                <select id="method">
+                    <option value="upi">UPI (PhonePe/GPay/Paytm)</option>
+                    <option value="card">Debit/Credit Card</option>
+                    <option value="netbanking">Net Banking</option>
+                    <option value="wallet">Wallet</option>
+                </select>
+            </div>
+            
+            <h3 style="margin: 25px 0 15px 0; font-size: 18px;">OR Scan QR Code</h3>
+            <div class="qr-container">
+                <div id="qrCode"></div>
+                <p style="margin-top: 10px; color: #555;">Scan with any UPI app</p>
+            </div>
+            
+            <h3 style="margin: 25px 0 15px 0; font-size: 18px;">Open Directly in App</h3>
+            <div class="upi-apps">
+                <div class="upi-app" onclick="openApp('phonepe')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/7/72/PhonePe_Logo.svg/1200px-PhonePe_Logo.svg.png" alt="PhonePe">
+                    <div>PhonePe</div>
+                </div>
+                <div class="upi-app" onclick="openApp('google_pay')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/f/f2/Google_Pay_Logo.svg/1200px-Google_Pay_Logo.svg.png" alt="Google Pay">
+                    <div>Google Pay</div>
+                </div>
+                <div class="upi-app" onclick="openApp('paytm')">
+                    <img src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/Paytm_logo_%28standalone%29.svg/1200px-Paytm_logo_%28standalone%29.svg.png" alt="Paytm">
+                    <div>Paytm</div>
+                </div>
+                <div class="upi-app" onclick="openApp('bharatpe')">
+                    <img src="https://seeklogo.com/images/B/bharatpe-logo-3B7D4C8249-seeklogo.com.png" alt="BharatPe">
+                    <div>BharatPe</div>
+                </div>
+            </div>
+            
+            <button class="btn" onclick="startPayment()">Proceed to Pay ₹<span id="displayAmount">100</span></button>
+            
+            <div id="statusMessage" class="status hidden"></div>
+        </div>
+        <div class="footer">
+            <p>Secured by Razorpay & Firebase | © 2023 Payment Gateway</p>
+            <p style="margin-top: 8px; font-size: 12px;">This is a test mode. No real money will be deducted.</p>
+        </div>
+    </div>
+
+    <script>
+        const backendUrl = 'https://your-backend.onrender.com'; // Render पर डिप्लॉय करने के बाद यहाँ अपना URL डालें
+        const amountInput = document.getElementById('amount');
+        const upiIdInput = document.getElementById('upiId');
+        const methodSelect = document.getElementById('method');
+        const displayAmount = document.getElementById('displayAmount');
+        const statusMessage = document.getElementById('statusMessage');
+        
+        amountInput.addEventListener('input', () => {
+            displayAmount.textContent = amountInput.value || '100';
+            generateQR();
+        });
+        
+        function generateQR() {
+            const amount = amountInput.value || '100';
+            const upiId = upiIdInput.value || 'test@razorpay';
+            const qrText = `upi://pay?pa=${upiId}&pn=Merchant&am=${amount}&cu=INR`;
+            QRCode.toCanvas(document.getElementById('qrCode'), qrText, { width: 180, margin: 1 }, (err) => {
+                if (err) console.error(err);
+            });
+        }
+        
+        async function startPayment() {
+            const amount = amountInput.value;
+            const upiId = upiIdInput.value;
+            const method = methodSelect.value;
+            
+            if (!amount || amount < 1) {
+                showStatus('Please enter a valid amount', 'error');
+                return;
+            }
+            
+            showStatus('Creating order...', '');
+            
+            try {
+                const response = await fetch(`${backendUrl}/api/create-order`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ amount, currency: 'INR', userUpiId: upiId })
+                });
+                const data = await response.json();
+                
+                if (data.success) {
+                    const options = {
+                        key: data.key,
+                        amount: data.amount,
+                        currency: "INR",
+                        name: "Demo Payment Gateway",
+                        description: "Test Transaction",
+                        order_id: data.orderId,
+                        handler: function (response) {
+                            showStatus(`Payment successful! Payment ID: ${response.razorpay_payment_id}`, 'success');
+                            console.log(response);
+                        },
+                        prefill: { upi_id: upiId },
+                        notes: { userUpiId: upiId },
+                        theme: { color: "#6a11cb" }
+                    };
+                    const rzp = new Razorpay(options);
+                    rzp.open();
+                } else {
+                    showStatus('Failed to create order', 'error');
+                }
+            } catch (error) {
+                showStatus('Network error. Please try again.', 'error');
+                console.error(error);
+            }
+        }
+        
+        function openApp(appName) {
+            const amount = amountInput.value || '100';
+            const upiId = upiIdInput.value || 'test@razorpay';
+            const links = {
+                phonepe: `phonepe://pay?pa=${upiId}&pn=Merchant&am=${amount}&cu=INR`,
+                google_pay: `tez://upi/pay?pa=${upiId}&pn=Merchant&am=${amount}`,
+                paytm: `paytmmp://upi/pay?pa=${upiId}&pn=Merchant&am=${amount}`,
+                bharatpe: `bharatpe://upi/pay?pa=${upiId}&pn=Merchant&am=${amount}`
+            };
+            window.location.href = links[appName] || `upi://pay?pa=${upiId}&am=${amount}`;
+        }
+        
+        function showStatus(message, type) {
+            statusMessage.textContent = message;
+            statusMessage.className = 'status ' + type;
+            statusMessage.classList.remove('hidden');
+            setTimeout(() => statusMessage.classList.add('hidden'), 5000);
+        }
+        
+        window.onload = generateQR;
+    </script>
+</body>
+</html>
