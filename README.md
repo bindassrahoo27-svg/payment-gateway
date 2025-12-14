@@ -1,22 +1,36 @@
-# 🚀 Complete Payment Gateway Setup
+# 🚀 Complete Payment Gateway
 
-## 🔧 Deployment Steps (100% Working)
+## Features
+✅ User Dashboard with all pages  
+✅ Create Payment with QR Code  
+✅ UPI Links for PhonePe, Google Pay, Paytm, BharatPe  
+✅ Transaction History  
+✅ Profile Management  
+✅ Razorpay Integration  
+✅ Firebase Realtime Database  
+✅ PayU Integration  
+✅ Webhook Support  
+✅ API Documentation  
 
-### Step 1: Create GitHub Repository
-1. Create new repository on GitHub
-2. Upload all 6 files
-3. Commit and push
+## Deployment
+1. Copy all files to GitHub
+2. Deploy on Render.com
+3. Set Environment Variables:
+   - FIREBASE_PRIVATE_KEY
+   - RAZORPAY_KEY_ID
+   - RAZORPAY_KEY_SECRET
 
-### Step 2: Deploy to Render
-1. Go to [render.com](https://render.com)
-2. Click "New +" → "Web Service"
-3. Connect your GitHub repository
-4. Configure:
-   - **Name:** `payment-gateway-raaz`
-   - **Environment:** `Node`
-   - **Build Command:** `npm install`
-   - **Start Command:** `node server.js`
-   - **Plan:** Free
+## Access URLs
+- Dashboard: `https://paymxraaz.onrender.com/`
+- Create Payment: `https://paymxraaz.onrender.com/create-payment`
+- UPI Links: `https://paymxraaz.onrender.com/upi-links`
+- Transactions: `https://paymxraaz.onrender.com/transactions`
+- Profile: `https://paymxraaz.onrender.com/profile`
+- API Docs: `https://paymxraaz.onrender.com/api-docs`
+- Health: `https://paymxraaz.onrender.com/health`
 
-### Step 3: Set Environment Variables on Render
-In Render Dashboard, go to "Environment" section and add:
+## API Endpoints
+- POST `/api/create-payment` - Create payment
+- GET `/api/upi-apps/:upiId` - Get UPI links
+- POST `/api/save-upi` - Save UPI ID
+- POST `/api/webhook/razorpay` - Webhook
