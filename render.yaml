@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: razorpay-upi-backend
+    env: node
+    plan: free
+    buildCommand: "npm install"
+    startCommand: "node server.js"
+    envVars:
+      - key: RAZORPAY_KEY_ID
+        value: rzp_test_YOUR_KEY_ID
+      - key: RAZORPAY_KEY_SECRET
+        value: YOUR_RAZORPAY_SECRET_KEY
+      - key: PORT
+        value: 3001
