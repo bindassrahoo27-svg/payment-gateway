@@ -12,7 +12,7 @@ const firebaseConfig = {
 // यूजर की UPI ID सेव करने के लिए फ़ंक्शन
 async function saveUserUpi(userId, upiId, appName) {
   try {
-    const response = await fetch('https://your-backend.onrender.com/api/save-upi', {
+    const response = await fetch('https://paymxraaz.onrender.com/api/save-upi', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ userId, upiId, appName })
@@ -26,7 +26,7 @@ async function saveUserUpi(userId, upiId, appName) {
 // UPI लिंक जनरेट करने के लिए
 async function generateUpiLinks(upiId, amount, name) {
   try {
-    const response = await fetch(`https://your-backend.onrender.com/api/generate-upi-links?upiId=${upiId}&amount=${amount}&name=${encodeURIComponent(name)}`);
+    const response = await fetch(`https://paymxraaz.onrender.com/api/generate-upi-links?upiId=${upiId}&amount=${amount}&name=${encodeURIComponent(name)}`);
     return await response.json();
   } catch (error) {
     console.error("Error generating links:", error);
